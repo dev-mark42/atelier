@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#06050d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CHROMA SPLAT">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <title>CHROMA SPLAT · 20 Diseños por Sección · Estudio PWA</title>
+  <style>
+    .icon-svg {
+      width: 1.15em;
+      height: 1.15em;
+      display: inline-block;
+      vertical-align: -0.18em;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .icon-svg-fill {
+      fill: currentColor;
+      stroke: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fxCanvas" class="fx-canvas" aria-hidden="true"></canvas>
+
+  <div class="bg-animated">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="paint-wave-layer"></div>
+    <div class="gradient-overlay"></div>
+  </div>
+
+  <!-- LOGIN CON ANIMACIÓN DE PINTURA LANZADA -->
+  <div id="loginScreen" class="login-screen hidden">
+    <div class="login-paint-stage" id="loginPaintStage" aria-hidden="true">
+      <svg class="paint-blob blob-pink" viewBox="0 0 240 240">
+        <path fill="#ff2a85" d="M126 18c25 2 45 20 62 39 17 19 33 41 29 66-4 24-28 40-48 56-20 15-36 31-59 31-24 0-46-16-64-34-18-19-33-42-29-67 4-25 27-44 48-61 20-16 37-32 61-30z"/>
+        <circle fill="#ff2a85" cx="212" cy="46" r="10"/>
+        <circle fill="#ff2a85" cx="225" cy="74" r="6"/>
+        <circle fill="#ff2a85" cx="30" cy="195" r="9"/>
+      </svg>
+      <svg class="paint-blob blob-cyan" viewBox="0 0 240 240">
+        <path fill="#18e0ff" d="M118 22c28-4 57 9 76 30 19 20 28 49 21 76-7 27-30 49-56 61-26 12-56 15-81 1-24-13-43-41-47-69-5-28 5-57 25-76 19-19 34-19 62-23z"/>
+        <circle fill="#18e0ff" cx="28" cy="44" r="11"/>
+        <circle fill="#18e0ff" cx="198" cy="202" r="8"/>
+        <circle fill="#18e0ff" cx="215" cy="182" r="5"/>
+      </svg>
+      <svg class="paint-blob blob-gold" viewBox="0 0 240 240">
+        <path fill="#ffc82c" d="M132 25c23 6 40 26 55 46 15 21 29 43 24 67-5 24-29 41-52 53-23 12-45 20-69 13-23-7-43-28-51-52-9-24-6-52 10-72 16-20 60-61 83-55z"/>
+        <circle fill="#ffc82c" cx="42" cy="176" r="10"/>
+        <circle fill="#ffc82c" cx="195" cy="42" r="7"/>
+      </svg>
+      <svg class="paint-blob blob-violet" viewBox="0 0 240 240">
+        <path fill="#7c3aed" d="M114 20c27-2 53 12 72 32 18 20 30 47 26 74-5 27-26 50-51 64-25 13-54 17-79 4-25-13-46-42-50-70-4-29 9-59 30-79 20-19 25-23 52-25z"/>
+        <circle fill="#7c3aed" cx="210" cy="148" r="9"/>
+        <circle fill="#7c3aed" cx="35" cy="65" r="7"/>
+      </svg>
+    </div>
+
+    <div class="login-container">
+      <div class="showcase-3d">
+        <div class="prism-card-3d" id="loginPrismCard">
+          <div class="prism-sheen"></div>
+          <div class="prism-splat-ring"></div>
+          <div class="prism-badge">20 POR SECCIÓN</div>
+          <div class="prism-code" id="showcaseCode">100 OBRAS</div>
+          <div class="prism-title" id="showcaseTitle">20 DISEÑOS POR SECCIÓN</div>
+          <div class="prism-sub">CHROMA DESIGN & PRINT LAB</div>
+        </div>
+      </div>
+
+      <div class="login-card glass-panel">
+        <div class="login-glow-border"></div>
+        <div class="login-header">
+          <div class="brand-mark" id="loginLogoBtn" title="Ver información del estudio">
+            <svg viewBox="0 0 64 64" class="brand-svg">
+              <polygon points="32,5 57,19 57,45 32,59 7,45 7,19" stroke="currentColor" stroke-width="2.8" fill="none"/>
+              <circle cx="32" cy="32" r="11" stroke="currentColor" stroke-width="2.5" fill="none"/>
+              <path d="M32 13v7M32 44v7M13 32h7M44 32h7M19 19l5 5M40 40l5 5M45 19l-5 5M24 40l-5 5" stroke="currentColor" stroke-width="2.2"/>
+            </svg>
+          </div>
+          <h1>CHROMA <span>SPLAT</span></h1>
+          <p class="typing-text" id="loginTyping"></p>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <div class="input-group">
+            <i class="ph ph-user"></i>
+            <input type="text" id="loginUser" placeholder="Usuario (admin / creator)" required>
+            <div class="error-msg">Requerido</div>
+          </div>
+          <div class="input-group">
+            <i class="ph ph-lock-key"></i>
+            <input type="password" id="loginPass" placeholder="Contraseña (admin123 / design123)" required>
+            <div class="error-msg">Requerido</div>
+          </div>
+          <button type="submit" class="btn-primary btn-block shimmer-btn" id="loginBtn">
+            <span>Ingresar al Estudio</span> <i class="ph ph-sign-in"></i>
+          </button>
+        </form>
+
+        <div class="divider"><span>o</span></div>
+        <button id="guestBtn" class="btn-ghost btn-block">
+          <i class="ph ph-user-circle"></i> Entrar como Invitado
+        </button>
+        <p class="login-hint">Sim DB: <b>admin / admin123</b> · <b>creator / design123</b></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP SHELL -->
+  <div id="app" class="app hidden">
+    <header class="topbar glass-panel">
+      <div class="topbar-left">
+        <div class="logo-wrapper" id="appLogoBtn">
+          <svg viewBox="0 0 64 64" class="brand-svg-small">
+            <polygon points="32,5 57,19 57,45 32,59 7,45 7,19" stroke="currentColor" stroke-width="2.8" fill="none"/>
+            <circle cx="32" cy="32" r="11" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M32 13v7M32 44v7M13 32h7M44 32h7" stroke="currentColor" stroke-width="2.2"/>
+          </svg>
+          <span class="logo-text">CHROMA <span>SPLAT</span></span>
+        </div>
+        <span class="db-pill" title="Base de datos simulada activa en localStorage">
+          <span class="db-dot"></span> <span id="topTotalBadge">100 Diseños</span>
+        </span>
+        <button class="fx-pill-btn" id="fxBurstBtn" title="Efecto visual en pantalla">
+          <i class="ph ph-sparkle"></i> Efecto Visual
+        </button>
+      </div>
+
+      <nav class="navbar" id="mainNav">
+        <button class="nav-btn active" data-screen="home"><i class="ph ph-house"></i> Inicio</button>
+        <button class="nav-btn" data-screen="catalog"><i class="ph ph-palette"></i> Catálogo</button>
+        <button class="nav-btn" data-screen="divisions"><i class="ph ph-stack"></i> Divisiones</button>
+        <button class="nav-btn" data-screen="saved"><i class="ph ph-bookmarks"></i> Guardados</button>
+        <button class="nav-btn admin-only hidden" data-screen="admin"><i class="ph ph-database"></i> Sim DB</button>
+      </nav>
+
+      <div class="topbar-right">
+        <div class="user-badge glass-panel">
+          <i class="ph-fill ph-user"></i>
+          <span id="userName">Invitado</span>
+          <span class="role-tag" id="userRole">guest</span>
+        </div>
+        <button class="icon-btn" id="themeToggle" title="Cambiar tema"><i class="ph ph-moon"></i></button>
+        <button class="icon-btn" id="logoutBtn" title="Cerrar sesión"><i class="ph ph-sign-out"></i></button>
+      </div>
+    </header>
+
+    <main id="screenContainer" class="screen-container">
+      <!-- 1. INICIO SIN SCROLL EXCESIVO -->
+      <section class="screen active" id="screen-home">
+        <div class="home-layout">
+          <div class="hero-panel glass-panel">
+            <div class="carousel-track" id="carouselTrack">
+              <div class="carousel-slide active" id="heroSlide0"><canvas class="hero-slide-canvas" id="heroCanvas0"></canvas><div class="overlay"></div></div>
+              <div class="carousel-slide" id="heroSlide1"><canvas class="hero-slide-canvas" id="heroCanvas1"></canvas><div class="overlay"></div></div>
+              <div class="carousel-slide" id="heroSlide2"><canvas class="hero-slide-canvas" id="heroCanvas2"></canvas><div class="overlay"></div></div>
+            </div>
+            <div class="hero-content">
+              <span class="hero-tag">20 Diseños Únicos por Sección · 100 en Total</span>
+              <div class="typewriter-container">
+                <h1 id="heroTyping"></h1>
+              </div>
+              <p>20 diseños únicos por sección (Sublimación & DTF, Diseño en Vinil, Diseños Vectores, 3D y Abstracto), cada uno con su propia ilustración sin repetir, zoom HD y precios en Bs.</p>
+              <div class="hero-cta-row">
+                <button class="btn-primary pulse-btn shimmer-btn" data-screen="catalog">Explorar Catálogo <i class="ph ph-arrow-right"></i></button>
+                <button class="btn-ghost" data-screen="divisions">Divisiones Conectadas <i class="ph ph-stack"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="recent-panel glass-panel">
+            <div class="panel-header">
+              <h2>Selección por Sección</h2>
+              <i class="ph ph-sparkle text-gold"></i>
+            </div>
+            <div class="items-grid-slim" id="featuredGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. CATÁLOGO DIVIDIDO POR SECCIONES (20 POR CATEGORÍA = 100 TOTAL) -->
+      <section class="screen" id="screen-catalog">
+        <div class="screen-header">
+          <div>
+            <h2>Catálogo por Secciones <span class="count-pill" id="catalogCountPill">100 diseños</span></h2>
+            <p class="subtitle-muted">20 diseños únicos por categoría con ilustración propia, zoom HD y precios en Bs.</p>
+          </div>
+          <div class="search-bar glass-panel">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="search" id="searchInput" placeholder="Buscar por título, formato o sección..." autocomplete="off">
+          </div>
+        </div>
+        <div class="chip-row" id="categoryChips">
+          <button class="chip active" data-cat="all">Todos (100)</button>
+          <button class="chip" data-cat="sublimacion-dtf">Sublimación & DTF (20)</button>
+          <button class="chip" data-cat="diseno-vinil">Diseño en Vinil (20)</button>
+          <button class="chip" data-cat="vectores">Diseños Vectores (20)</button>
+          <button class="chip" data-cat="3d">3D (20)</button>
+          <button class="chip" data-cat="abstracto">Abstracto (20)</button>
+        </div>
+        <div id="catalogGrid" class="items-grid"></div>
+      </section>
+
+      <!-- 3. DIVISIONES CONECTADAS AL PROYECTO PRINCIPAL -->
+      <section class="screen" id="screen-divisions">
+        <div class="screen-header">
+          <div>
+            <h2>Divisiones Conectadas al Núcleo</h2>
+            <p class="subtitle-muted">Cada división controla el catálogo de 100 diseños (20 por sección), el visor con zoom, los efectos visuales y la base de datos simulada.</p>
+          </div>
+          <div class="division-filter-group">
+            <select id="divisionFilterSelect" class="mini-select">
+              <option value="all">Todas las divisiones</option>
+              <option value="div1">División 01 · Filtros, Búsqueda y Validación</option>
+              <option value="div2">División 02 · Efectos Visuales, Zoom HD, Guardados y PWA</option>
+              <option value="div3">División 03 · Responsive Multi-Dispositivo & Sim DB</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divisions-layout">
+          <div class="divisions-grid" id="divisionsGrid"></div>
+
+          <div class="division-runner glass-panel" id="divisionRunner">
+            <div class="runner-header">
+              <div>
+                <span class="tag" id="runnerBadge">DIVISIÓN ACTIVA</span>
+                <h3 id="runnerTitle">Selecciona o ejecuta una división</h3>
+              </div>
+              <button class="btn-primary btn-sm shimmer-btn" id="runDivisionActionBtn"><i class="ph ph-play"></i> Ejecutar</button>
+            </div>
+            <p id="runnerDesc" class="runner-desc">Conecta el estado de la división con los 100 diseños (20 por sección), visor zoom y registros de la DB simulada.</p>
+            <div class="runner-output" id="runnerOutput">
+              <div class="runner-log-line">[SIM-DB] 100 diseños únicos (20 por sección) listos.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. GUARDADOS -->
+      <section class="screen" id="screen-saved">
+        <div class="screen-header">
+          <h2>Mis Diseños Guardados</h2>
+        </div>
+        <div id="savedGrid" class="items-grid"></div>
+        <div id="emptySaved" class="empty-state hidden">
+          <i class="ph ph-bookmarks"></i>
+          <h3>No tienes diseños guardados en tu lista</h3>
+          <button class="btn-primary" data-screen="catalog">Explorar Catálogo</button>
+        </div>
+      </section>
+
+      <!-- 5. BASE DE DATOS SIMULADA -->
+      <section class="screen" id="screen-admin">
+        <div class="admin-layout">
+          <div class="admin-left">
+            <div class="admin-stats-grid">
+              <div class="stat-card glass-panel">
+                <i class="ph ph-palette stat-icon blue"></i>
+                <div><h3 id="statTotalItems">100</h3><p>Diseños en DB</p></div>
+              </div>
+              <div class="stat-card glass-panel">
+                <i class="ph ph-activity stat-icon green"></i>
+                <div><h3 id="statEvents">0</h3><p>Eventos DB</p></div>
+              </div>
+              <div class="stat-card glass-panel">
+                <i class="ph ph-chat-teardrop-text stat-icon purple"></i>
+                <div><h3 id="statOrders">0</h3><p>Cotizaciones</p></div>
+              </div>
+            </div>
+            <div class="admin-card glass-panel mt-16">
+              <h3><i class="ph ph-database"></i> Control DB Simulada</h3>
+              <p class="subtitle-muted">Tablas simuladas en <code>localStorage</code> conectadas a los 100 diseños (20 por sección).</p>
+              <button class="btn-ghost btn-block mt-12" id="resetSimDbBtn"><i class="ph ph-arrow-counter-clockwise"></i> Restaurar 100 Diseños Semilla</button>
+            </div>
+          </div>
+
+          <div class="admin-right glass-panel">
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="logs"><i class="ph ph-list-dashes"></i> Bitácora DB</button>
+              <button class="tab-btn" data-tab="orders"><i class="ph ph-clipboard-text"></i> Cotizaciones</button>
+            </div>
+            <div class="log-container" id="adminLogs"></div>
+            <div class="log-container hidden" id="adminOrders"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- BOTONES FLOTANTES -->
+    <button class="fab-suggest" id="fabQuote" title="Cotizar por formulario o WhatsApp"><i class="ph ph-chat-teardrop-text"></i></button>
+    <button class="fab-chatbot pulse-btn" id="chatbotToggle" title="Asistente Chroma"><i class="ph ph-robot"></i></button>
+
+    <!-- CHATBOT -->
+    <div class="chatbot-window glass-panel hidden" id="chatbotWindow">
+      <div class="chat-header">
+        <div class="chat-bot-info">
+          <i class="ph-fill ph-robot"></i>
+          <div><h4>ChromaBot</h4><p>20 por Sección</p></div>
+        </div>
+        <button class="icon-btn" id="closeChatbot"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot">¡Hola! Tenemos <b>20 diseños únicos por sección</b> (100 en total), cada uno con su propia composición visual y zoom HD.</div>
+      </div>
+      <form class="chat-input-area" id="chatForm">
+        <input type="text" id="chatInput" placeholder="Pregunta por 3D, secciones o zoom..." autocomplete="off">
+        <button type="submit"><i class="ph ph-paper-plane-right"></i></button>
+      </form>
+    </div>
+
+    <!-- MODAL DETALLE CON ZOOM INTEGRADO -->
+    <div id="detailModal" class="modal-overlay hidden">
+      <div class="modal-content glass-panel scale-in">
+        <button class="icon-btn close-btn" id="closeDetail"><i class="ph ph-x"></i></button>
+        <div class="detail-grid">
+          <div class="detail-cover-container">
+            <div class="detail-img-box" id="detailImgBox" title="Haz clic para abrir visor con zoom completo">
+              <canvas id="detailCanvas" class="detail-cover"></canvas>
+              <button type="button" class="zoom-launch-badge" id="openLightboxBtn"><i class="ph ph-magnifying-glass-plus"></i> Zoom HD</button>
+            </div>
+            <div class="palette-strip" id="detailPalette"></div>
+            <div class="detail-extra-meta">
+              <div><span>Aplicación ideal:</span><strong id="detailApplication">-</strong></div>
+              <div><span>Acabado / Salida:</span><strong id="detailFinish">-</strong></div>
+              <div><span>Modo de color:</span><strong id="detailColorMode">-</strong></div>
+            </div>
+          </div>
+          <div class="detail-info">
+            <div class="detail-meta-top">
+              <span class="tag" id="detailCategory">Sección</span>
+              <span class="price-tag" id="detailPrice">Bs. 0.00</span>
+            </div>
+            <h1 id="detailTitle">Título</h1>
+            <p id="detailSubtitle" class="author"><i class="ph ph-tag"></i> Sección · División · Autor</p>
+
+            <div class="spec-grid-info">
+              <div class="spec-box"><span>Dimensiones / DPI</span><strong id="detailRes">-</strong></div>
+              <div class="spec-box"><span>Formatos Incluidos</span><strong id="detailFormats">-</strong></div>
+              <div class="spec-box"><span>Capas / Vector</span><strong id="detailLayers">-</strong></div>
+              <div class="spec-box"><span>Uso / Licencia</span><strong id="detailLicense">-</strong></div>
+              <div class="spec-box"><span>División</span><strong id="detailDivisionTag">-</strong></div>
+              <div class="spec-box"><span>Disponibilidad</span><strong id="detailStock">-</strong></div>
+            </div>
+
+            <p id="detailDesc" class="synopsis">Descripción fiel al título...</p>
+
+            <div class="detail-actions">
+              <button id="detailQuoteBtn" class="btn-primary shimmer-btn"><i class="ph ph-chat-teardrop-text"></i> Cotizar (Form / WhatsApp)</button>
+              <a id="detailWaDirectBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn-whatsapp"><i class="ph ph-paper-plane-right"></i> Cotizar por WhatsApp</a>
+              <button id="detailSaveBtn" class="btn-ghost"><i class="ph ph-bookmark"></i> Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISOR LIGHTBOX DE ZOOM INTERACTIVO -->
+    <div id="zoomModal" class="zoom-overlay hidden" role="dialog" aria-modal="true" aria-label="Visor de imagen con zoom">
+      <div class="zoom-topbar">
+        <div class="zoom-title-wrap">
+          <span class="tag" id="zoomSectorTag">Sección</span>
+          <h3 id="zoomImageTitle">Vista previa con Zoom</h3>
+        </div>
+        <div class="zoom-controls">
+          <button type="button" class="icon-btn" id="zoomOutBtn" title="Alejar (-)"><i class="ph ph-magnifying-glass-minus"></i></button>
+          <span class="zoom-level-pill" id="zoomLevelText">100%</span>
+          <button type="button" class="icon-btn" id="zoomInBtn" title="Acercar (+)"><i class="ph ph-magnifying-glass-plus"></i></button>
+          <button type="button" class="icon-btn" id="zoomResetBtn" title="Restaurar escala"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          <button type="button" class="icon-btn close-zoom-btn" id="closeZoomBtn" title="Cerrar visor"><i class="ph ph-x"></i></button>
+        </div>
+      </div>
+      <div class="zoom-stage" id="zoomStage">
+        <canvas id="zoomCanvas"></canvas>
+      </div>
+      <p class="zoom-hint">Usa la rueda del ratón, doble clic o los botones + / - para hacer zoom y arrastra la imagen para inspeccionar cada detalle.</p>
+    </div>
+
+    <!-- MODAL DE COTIZACIÓN (+591 62072154 UNA SOLA VEZ) -->
+    <div id="quoteModal" class="modal-overlay hidden">
+      <div class="modal-content glass-panel scale-in" style="max-width: 590px;">
+        <button class="icon-btn close-btn" id="closeQuote"><i class="ph ph-x"></i></button>
+        <h2 style="margin-bottom: 6px;">Cotización de Diseño</h2>
+        <p class="subtitle-muted" style="margin-bottom: 14px;">Envía tu solicitud por <b>Formulario</b> o directo a nuestro <b>WhatsApp: +591 62072154</b>.</p>
+
+        <div class="quote-mode-bar">
+          <button type="button" class="mode-btn active" id="modeFormBtn"><i class="ph ph-clipboard-text"></i> Cotizar por Formulario</button>
+          <button type="button" class="mode-btn wa-mode" id="modeWaBtn"><i class="ph ph-paper-plane-right"></i> Cotizar por WhatsApp</button>
+        </div>
+
+        <form id="quoteForm" novalidate>
+          <div class="input-row">
+            <div class="input-group">
+              <i class="ph ph-user"></i>
+              <input type="text" id="quoteName" placeholder="Tu nombre o negocio (mín. 3 letras)" required>
+              <div class="error-msg">Mín. 3 letras</div>
+            </div>
+            <div class="input-group">
+              <i class="ph ph-envelope"></i>
+              <input type="email" id="quoteEmail" placeholder="Correo electrónico" required>
+              <div class="error-msg">Correo inválido</div>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group">
+              <i class="ph ph-hash"></i>
+              <input type="number" id="quoteQty" min="1" max="500" placeholder="Cantidad / Piezas (1 - 500)" required>
+              <div class="error-msg">1 a 500</div>
+            </div>
+            <div class="input-group">
+              <i class="ph ph-list-dashes"></i>
+              <select id="quoteService">
+                <option value="Sublimación & DTF">Sublimación & DTF</option>
+                <option value="Diseño en Vinil">Diseño en Vinil</option>
+                <option value="Diseños Vectores">Diseños Vectores</option>
+                <option value="Diseño 3D">Diseño 3D</option>
+                <option value="Arte Abstracto">Arte Abstracto</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group" style="align-items: flex-start;">
+            <i class="ph ph-chat-text" style="top: 22px;"></i>
+            <textarea id="quoteNotes" placeholder="Indica tamaño, colores, tipo de prenda/vinil o detalles del diseño (mín. 10 caracteres)..." maxlength="320" required></textarea>
+            <div class="error-msg" style="top: 22px;">Mín. 10 letras</div>
+          </div>
+          <div class="char-counter"><span id="quoteCharCount">0</span>/320</div>
+
+          <div class="quote-submit-pair">
+            <button type="submit" class="btn-primary shimmer-btn"><i class="ph ph-clipboard-text"></i> Enviar por Formulario</button>
+            <button type="button" class="btn-whatsapp" id="sendWhatsappQuoteBtn"><i class="ph ph-paper-plane-right"></i> Enviar por WhatsApp</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL INFO -->
+    <div id="infoModal" class="modal-overlay hidden">
+      <div class="modal-content glass-panel scale-in" style="max-width: 560px;">
+        <button class="icon-btn close-btn" id="closeInfo"><i class="ph ph-x"></i></button>
+        <h2 style="color: var(--accent-hover); margin-bottom: 12px;">CHROMA SPLAT · 20 por Sección</h2>
+        <p style="line-height: 1.6; margin-bottom: 12px;">Catálogo visual con <b>20 diseños únicos por sección</b> (100 en total: Sublimación & DTF, Diseño en Vinil, Diseños Vectores, 3D y Abstracto), cada uno con su propia ilustración distinta en canvas y zoom interactivo.</p>
+      </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function() {
+      const ICONS = {
+        'ph-house': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+        'ph-palette': '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.1-.7-.4-1-.3-.3-.4-.7-.4-1.1 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9-10-9z"/></svg>',
+        'ph-stack': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7l10-5z"/><path d="m2 12 10 5 10-5"/><path d="m2 17 10 5 10-5"/></svg>',
+        'ph-bookmarks': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14l-4.5-3L8 18V4z"/><path d="M17 7h1a2 2 0 0 1 2 2v13l-4.5-3L11 22v-1"/></svg>',
+        'ph-database': '<svg class="icon-svg" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 9 0 0 0 18 0V5"/><path d="M3 12a9 9 0 0 0 18 0"/></svg>',
+        'ph-user': '<svg class="icon-svg icon-svg-fill" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6v1H4v-1z"/></svg>',
+        'ph-user-circle': '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19.2c1.4-2 3.3-3.2 5.5-3.2s4.1 1.2 5.5 3.2"/></svg>',
+        'ph-lock-key': '<svg class="icon-svg" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1"/></svg>',
+        'ph-sign-in': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>',
+        'ph-sign-out': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
+        'ph-moon': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+        'ph-sun': '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
+        'ph-arrow-right': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>',
+        'ph-sparkle': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10.5l-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9z"/></svg>',
+        'ph-magnifying-glass': '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>',
+        'ph-magnifying-glass-plus': '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>',
+        'ph-magnifying-glass-minus': '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>',
+        'ph-play': '<svg class="icon-svg icon-svg-fill" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>',
+        'ph-activity': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+        'ph-chat-teardrop-text': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>',
+        'ph-arrow-counter-clockwise': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>',
+        'ph-list-dashes': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><circle cx="5" cy="6" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="18" r="1"/></svg>',
+        'ph-clipboard-text': '<svg class="icon-svg" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>',
+        'ph-robot': '<svg class="icon-svg" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/><path d="M9 16.5h6"/></svg>',
+        'ph-x': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+        'ph-paper-plane-right': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>',
+        'ph-tag': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.59 13.41 11 3.83V2H3v8h1.83l9.58 9.59a2 2 0 0 0 2.83 0l3.35-3.35a2 2 0 0 0 0-2.83z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
+        'ph-check-circle': '<svg class="icon-svg icon-svg-fill" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-1.2 14.3-3.5-3.5 1.4-1.4 2.1 2.1 4.6-4.6 1.4 1.4z"/></svg>',
+        'ph-warning-circle': '<svg class="icon-svg icon-svg-fill" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg>',
+        'ph-info': '<svg class="icon-svg icon-svg-fill" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>',
+        'ph-bookmark': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+        'ph-bookmark-simple': '<svg class="icon-svg icon-svg-fill" viewBox="0 0 24 24"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+        'ph-hash': '<svg class="icon-svg" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',
+        'ph-chat-text': '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/></svg>'
+      };
+
+      function renderIcons(root) {
+        const els = (root || document).querySelectorAll('i[class*="ph-"]');
+        els.forEach((el) => {
+          if (el.dataset.iconRendered === '1') return;
+          const cls = Array.from(el.classList).find((c) => ICONS[c]);
+          if (cls) {
+            el.innerHTML = ICONS[cls];
+            el.dataset.iconRendered = '1';
+          }
+        });
+      }
+
+      renderIcons(document);
+      new MutationObserver((mutations) => {
+        mutations.forEach((m) => {
+          m.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) renderIcons(node);
+          });
+        });
+      }).observe(document.body, { childList: true, subtree: true });
+    })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "CHROMA SPLAT · 20 Diseños por Sección · Estudio PWA",
+  "short_name": "CHROMA SPLAT",
+  "description": "Catálogo PWA con 20 diseños únicos por sección (100 diseños en total), cada uno con su propia ilustración única en canvas, precios en Bs. y zoom HD.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#06050d",
+  "theme_color": "#06050d",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1829/1829111.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1829/1829111.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
